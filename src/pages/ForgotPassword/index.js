@@ -1,23 +1,22 @@
+import { useFormik } from "formik";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import * as yup from "yup";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as yup from "yup";
 
-import "./style.scss";
 import {
   EMPTY,
   REQUEST_EMAIL,
   REQUEST_PASSWORD,
-  REQUIRED_EMAIL,
   REQUIRED_CODE,
+  REQUIRED_EMAIL,
   TOAST_CONFIG,
 } from "../../constants/default";
-import { sendForgotPassword } from "../../services/auth.service";
-import { verifyForgotPassword } from "../../services/auth.service";
-import { encryptKey } from "../../helpers/crypto.helper";
 import { INTERNAL_SERVER_ERROR } from "../../constants/error-message";
+import { encryptKey } from "../../helpers/crypto.helper";
+import { sendForgotPassword, verifyForgotPassword } from "../../services/auth.service";
+import "./style.scss";
 
 const validation = yup.object({
   re_email: yup
@@ -107,6 +106,7 @@ function ForgotPassword() {
             />
             <button
               onClick={requestCode}
+              type="button"
               className="col-3 lh-44 fg-pw__icon-wrapper"
               disabled={!formik.values.re_email}
             >
