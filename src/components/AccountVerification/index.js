@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import {
-  TOAST_CONFIG,
-  INTERNAL_SERVER_ERROR,
   EMPTY,
+  INTERNAL_SERVER_ERROR,
+  TOAST_CONFIG,
 } from "../../constants/default";
 import { ADMIN, OWNER } from "../../constants/roles";
 import { decrypt, encrypt, encryptKey } from "../../helpers/crypto.helper";
@@ -90,6 +90,7 @@ function AccountVerification() {
             />
             <button
               className="col-3 lh-44 fg-pw__icon-wrapper"
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 handleRequestCode();
