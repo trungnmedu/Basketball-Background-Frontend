@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import { Rating } from "react-simple-star-rating";
+import { ToastContainer, toast } from "react-toastify";
 
-import "./style.scss";
 import noData from "../../assets/images/no-data.jpg";
+import yard1 from "../../assets/images/nodata.jpeg";
 import { EMPTY, TOAST_CONFIG } from "../../constants/default";
+import { INTERNAL_SERVER_ERROR } from "../../constants/error-message";
 import { decrypt, encrypt, encryptKey } from "../../helpers/crypto.helper";
 import {
   getAllProvinces,
   getDistrictsByProvinceId,
 } from "../../services/location.service";
-import { INTERNAL_SERVER_ERROR } from "../../constants/error-message";
 import { searchYard } from "../../services/yard.service";
-import yard1 from "../../assets/images/nodata.jpeg";
-import Pagination from "../Pagination";
 import DisableElement from "../DisableElement";
+import Pagination from "../Pagination";
+import "./style.scss";
 
 function BookingWidget() {
   const ITEMS_PER_PAGE = 8;
@@ -35,21 +35,24 @@ function BookingWidget() {
     setIsLoadingProvinces(true);
     const storedProvinces = localStorage.getItem(encryptKey("provinces"));
     if (!storedProvinces) {
-      return async () => {
-        await getAllProvinces()
-          .then((res) => {
-            if (res) {
-              localStorage.setItem(encryptKey("provinces"), encrypt(res));
-              setProvinces(res);
-            }
-          })
-          .catch((error) => {
-            toast.error(INTERNAL_SERVER_ERROR, TOAST_CONFIG);
-          })
-          .finally(() => {
-            setIsLoadingProvinces(false);
-          });
-      };
+      (
+        async () => {
+          await getAllProvinces()
+            .then((res) => {
+              if (res) {
+                localStorage.setItem(encryptKey("provinces"), encrypt(res));
+                setProvinces(res);
+              }
+            })
+            .catch((error) => {
+              toast.error(INTERNAL_SERVER_ERROR, TOAST_CONFIG);
+            })
+            .finally(() => {
+              setIsLoadingProvinces(false);
+            });
+        }
+      )()
+      return
     } else {
       setProvinces(decrypt(storedProvinces));
       setIsLoadingProvinces(false);

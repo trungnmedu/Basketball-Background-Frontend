@@ -1,15 +1,13 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import * as _ from "lodash";
 import { useEffect, useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import * as _ from "lodash";
 
-import "./style.scss";
+import empty from "../../assets/images/empty.png";
+import yard from "../../assets/images/nodata.jpeg";
 import { EMPTY, TOAST_CONFIG } from "../../constants/default";
-import {
-  getAllProvinces,
-  getDistrictsByProvinceId,
-} from "../../services/location.service";
+import { INTERNAL_SERVER_ERROR } from "../../constants/error-message";
 import {
   END,
   MIN_PERIOD,
@@ -17,12 +15,13 @@ import {
   START,
   TIMELINE,
 } from "../../constants/time";
-import { INTERNAL_SERVER_ERROR } from "../../constants/error-message";
-import { decrypt, encrypt, encryptKey } from "../../helpers/crypto.helper";
-import Modal, { useModal } from "../Modal";
-import UpdateSubYardModal from "../../modals/UpdateSubYardModal";
-import empty from "../../assets/images/empty.png";
 import { YARD_TYPES } from "../../constants/type";
+import { decrypt, encrypt, encryptKey } from "../../helpers/crypto.helper";
+import UpdateSubYardModal from "../../modals/UpdateSubYardModal";
+import {
+  getAllProvinces,
+  getDistrictsByProvinceId,
+} from "../../services/location.service";
 import {
   activateSubYard,
   addNewYard,
@@ -32,7 +31,8 @@ import {
   updateYard,
 } from "../../services/yard.service";
 import DisableScreen from "../DisableScreen";
-import yard from "../../assets/images/nodata.jpeg";
+import Modal, { useModal } from "../Modal";
+import "./style.scss";
 
 const _URL = window.URL || window.webkitURL;
 
@@ -166,21 +166,24 @@ function YardDetails() {
     setIsLoadingProvinces(true);
     const storedProvinces = localStorage.getItem(encryptKey("provinces"));
     if (!storedProvinces) {
-      return async () => {
-        await getAllProvinces()
-          .then((res) => {
-            if (res) {
-              localStorage.setItem(encryptKey("provinces"), encrypt(res));
-              setProvinces(res);
-            }
-          })
-          .catch((error) => {
-            toast.error(INTERNAL_SERVER_ERROR, TOAST_CONFIG);
-          })
-          .finally(() => {
-            setIsLoadingProvinces(false);
-          });
-      };
+      (
+        async () => {
+          await getAllProvinces()
+            .then((res) => {
+              if (res) {
+                localStorage.setItem(encryptKey("provinces"), encrypt(res));
+                setProvinces(res);
+              }
+            })
+            .catch((error) => {
+              toast.error(INTERNAL_SERVER_ERROR, TOAST_CONFIG);
+            })
+            .finally(() => {
+              setIsLoadingProvinces(false);
+            });
+        }
+      )()
+      return
     } else {
       setProvinces(decrypt(storedProvinces));
       setIsLoadingProvinces(false);
@@ -326,10 +329,8 @@ function YardDetails() {
       name: basicData.name,
       address:
         basicData.address +
-        `, ${
-          districts.find((d) => d.id === Number(selectedDistrict)).districtName
-        }, ${
-          provinces.find((p) => p.id === Number(selectedProvince)).provinceName
+        `, ${districts.find((d) => d.id === Number(selectedDistrict)).districtName
+        }, ${provinces.find((p) => p.id === Number(selectedProvince)).provinceName
         }`,
       districtId: selectedDistrict,
       openAt: TIMELINE.find((item) => item.value === Number(timeSlot.start))
