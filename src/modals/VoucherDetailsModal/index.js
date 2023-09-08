@@ -126,7 +126,7 @@ const VoucherDetailsModal = ({ voucher, toggleModal, voucherTypeCreate, fetchVou
 							min={currentVoucher.usages}
 						/>
 					</div>
-					
+
 					<div className="row p-2">
 						<span
 							className="col-1 lh-44 signup__icon-wrapper"
@@ -138,7 +138,7 @@ const VoucherDetailsModal = ({ voucher, toggleModal, voucherTypeCreate, fetchVou
 							className="col-11 outline-none p-2 signup__input-border"
 							type="date"
 							placeholder="Start date ..."
-							readOnly
+							required
 							value={currentVoucher.startDate || ''}
 							min={moment(new Date()).format("yyyy-mm-DD")}
 							name='startDate'
@@ -164,7 +164,7 @@ const VoucherDetailsModal = ({ voucher, toggleModal, voucherTypeCreate, fetchVou
 							onChange={(e) => handleVoucherOnChange(e)}
 						/>
 					</div>
-					
+
 					<div className="py-2">
 						{voucher?.status !== VOUCHER_STATUS.INACTIVE && (
 							<button
